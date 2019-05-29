@@ -1,11 +1,11 @@
-var possibleSolutions = [];
-var solution = {};
+var allSolutions=[];
+var solution = [];
 var solved = false;
-var count = 1;
 var allClues=[];
 var cats=[];
+var reducible = true;
 
-cats=[nationality,pets,houses];
+
 
 //width indicates the number of categories in play 
 //(i.e., width = solution[0].length)
@@ -41,15 +41,34 @@ function generateClues(solution){
 }
 
 
-function makePuzzle(cats){
-	possibleSolutions=generatePossible(cats[0].values,cats[1].values);
-	for(var i=2;i<cats.length;i++){
-		possibleSolutions = generatePossible(possibleSolutions,cats[i].values);
+function pickCategories(width,height){
+	cats.push(names);
+	while(names.values[0].length>height){
+		names.values[0].pop();
 	}
-	solution=possibleSolutions[getRandInt(0,possibleSolutions.length-1)];
+	options = permute(options);
+	for(var i=0;i<width-1;i++){
+		cats.push(options[i]);
+		options[i].values[0]=permute(options[i].values[0]);
+		while(options[i].values[0].length>height){
+			options[i].values[0].pop();
+		}
+	}
+}
+
+
+function makePuzzle(cats){
+	
+	allSolutions=generatePossible(cats[0].values,cats[1].values);
+	for(var i=2;i<cats.length;i++){
+		allSolutions = generatePossible(allSolutions,cats[i].values);
+	}
+	solution=allSolutions[getRandInt(0,allSolutions.length-1)];
+	makeGrid(solution);
 		
  	allClues = generateClues(solution);
 	allClues=permute(allClues);
+	var possibleSolutions=allSolutions;
 		
 	var keepClues = [];
 	var numClues = 0;
@@ -60,80 +79,100 @@ function makePuzzle(cats){
 		newPossible = [];
 		newClue = allClues[numClues];
 		
-		if(newClue.type=='anti'){
-			firstInd = lookUpIndex(newClue.firstProperty.category);
-			secondInd=lookUpIndex(newClue.secondProperty.category);
-			for(var i=0;i<possibleSolutions.length;i++){
-				for(var j=0;j<possibleSolutions[i].length;j++){
-					if(possibleSolutions[i][j][firstInd]==newClue.firstProperty.value){
-						if(possibleSolutions[i][j][secondInd]!=newClue.secondProperty.value){
-							newPossible.push(possibleSolutions[i]);
-							j=possibleSolutions[i].length;
-						}
-					}
-				}
-			}
-		}else if(newClue.type=='direct'){
-			firstInd = lookUpIndex(newClue.firstProperty.category);
-			secondInd=lookUpIndex(newClue.secondProperty.category);
-			for(var i=0;i<possibleSolutions.length;i++){
-				for(var j=0;j<possibleSolutions[i].length;j++){
-					if(possibleSolutions[i][j][firstInd]==newClue.firstProperty.value){
-						if(possibleSolutions[i][j][secondInd]==newClue.secondProperty.value){
-							newPossible.push(possibleSolutions[i]);
-							j=possibleSolutions[i].length;
-						}
-					}
-				}	
-			}
-		}
+		newPossible = processClue(newClue, possibleSolutions);
 		
 		if(newPossible.length<possibleSolutions.length){
 			keepClues.push(newClue);
 			possibleSolutions = newPossible;
-			addClue(newClue);
 		}
 		if(possibleSolutions.length==1){
 			solved=true;
 		}
 		numClues++;
 	}
+
+	keepClues = reduceClues(keepClues);
 	
-	return keepClues;
+	for(var i=0;i<keepClues.length;i++){
+		addClue(keepClues[i]);
+	}
+	
 }
 		
 
-
-function addClue(clue){
-	Add = document.createElement("P");
-	if(clue.type=='direct'){
-		if(clue.firstProperty.category=='nationality'){
-			if(clue.secondProperty.category=='pets'){
-				Add.innerText = "The "+clue.firstProperty.value+" person has a "+clue.secondProperty.value+".";
-			}else if(clue.secondProperty.category=='house'){
-				Add.innerText = "The "+clue.firstProperty.value+" person has a "+clue.secondProperty.value+" house.";
+function reduceClues(clues){
+	while(reducible){
+		for(var i=0;i<clues.length;i++){
+			var test = Array.from(clues);
+			test.splice(i,1);
+			var possibleSolutions = Array.from(allSolutions);
+			for(var j=0;j<test.length;j++){
+				possibleSolutions = processClue(test[j],possibleSolutions);
 			}
-		}else if(clue.firstProperty.category=='pets'){
-			Add.innerText = "The person with a "+clue.firstProperty.value+" lives in a "+clue.secondProperty.value+" house.";
-		}
-	}else if(clue.type=='anti'){
-		if(clue.firstProperty.category=='nationality'){
-			if(clue.secondProperty.category=='pets'){
-				Add.innerText = "The "+clue.firstProperty.value+" person does not have a "+clue.secondProperty.value+".";
-			}else if(clue.secondProperty.category=='house'){
-				Add.innerText = "The "+clue.firstProperty.value+" person does not have a "+clue.secondProperty.value+" house.";
+			if(possibleSolutions.length==1){
+				i=clues.length;
+				clues = test;
 			}
-		}else if(clue.firstProperty.category=='pets'){
-			Add.innerText = "The person with a "+clue.firstProperty.value+" does not live in a "+clue.secondProperty.value+" house.";
+			if(i==clues.length-1){
+				reducible = false;
+			}
 		}
 	}
-
-	document.getElementById("clueBox").appendChild(Add);
+	return clues;
 }
 
 
+
+pickCategories(4,4);
 makePuzzle(cats);
 
+
+function processClue(clue,solutionSet){
+
+	if(clue.type=='anti'){
+		return checkAnti(clue,solutionSet);
+	}else if(clue.type=='direct'){
+		return checkDirect(clue,solutionSet);
+	}
+}
+
+
+function checkDirect(clue, solutionSet){
+	firstInd = lookUpIndex(clue.firstProperty.category);
+	secondInd=lookUpIndex(clue.secondProperty.category);
+	var usable =[];
+	
+	for(var i=0;i<solutionSet.length;i++){
+		for(var j=0;j<solutionSet[i].length;j++){
+			if(solutionSet[i][j][firstInd]==clue.firstProperty.value){
+				if(solutionSet[i][j][secondInd]==clue.secondProperty.value){
+					usable.push(solutionSet[i]);
+					j=solutionSet[i].length;
+				}
+			}
+		}	
+	}
+	return usable;
+}
+
+
+function checkAnti(clue,solutionSet){
+	firstInd = lookUpIndex(clue.firstProperty.category);
+	secondInd=lookUpIndex(clue.secondProperty.category);
+	
+	var usable = [];
+	for(var i=0;i<solutionSet.length;i++){
+		for(var j=0;j<solutionSet[i].length;j++){
+			if(solutionSet[i][j][firstInd]==clue.firstProperty.value){
+				if(solutionSet[i][j][secondInd]!=clue.secondProperty.value){
+					usable.push(solutionSet[i]);
+					j=solutionSet[i].length;
+				}
+			}
+		}
+	}
+	return usable;
+}
 
 
 
