@@ -1,12 +1,23 @@
 
-<div id="clueBox">Clues</div>
+<div id="clueBox" style="float:left"></div>
+<script src="solver.js"></script>
 
 <script src="categories.js"></script>
-<script src="solver.js"></script>
 <script src="parse.js"></script>
 
+<br>
+<br>
+<center>
+<div name="setup" id="welcome">Welcome to the Logic Puzzles! First, how big of a puzzle would you like?</div>
+<div name="setup">Number of categories: <input type="text" name="setup" value="" id="width"></div>
+<div name="setup">Number of people: <input type="text" name="setup" value="" id="height"></div>
+<button name="setup" id="submit" type="button">Submit</button>
+<br>
+<br>
+<br>
+<br>
 
-<table id="maingrid" style="border:1px solid black; border-collapse:collapse;">
+<table id="maingrid" style="float:right; border:1px solid black; border-collapse:collapse; table-layout:fixed; border-top: 0px; border-left: 0px">
 </table>
 
 <script src="grid.js"></script>

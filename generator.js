@@ -5,6 +5,20 @@ var allClues=[];
 var cats=[];
 var reducible = true;
 
+document.getElementById("submit").onclick=function(){
+	width=document.getElementById("width").value;
+	height=document.getElementById("height").value;
+	pickCategories(width,height);
+	makePuzzle(cats);
+	turnOff(document.getElementsByName("setup"));
+}
+
+
+function turnOff(elements){
+	for(var i=0;i<elements.length;i++){
+		elements[i].style.display="none";
+	}
+}
 
 
 //width indicates the number of categories in play 
@@ -43,6 +57,7 @@ function generateClues(solution){
 
 function pickCategories(width,height){
 	cats.push(names);
+	names.values[0]=permute(names.values[0]);
 	while(names.values[0].length>height){
 		names.values[0].pop();
 	}
@@ -123,9 +138,6 @@ function reduceClues(clues){
 
 
 
-pickCategories(4,4);
-makePuzzle(cats);
-
 
 function processClue(clue,solutionSet){
 
@@ -138,8 +150,8 @@ function processClue(clue,solutionSet){
 
 
 function checkDirect(clue, solutionSet){
-	firstInd = lookUpIndex(clue.firstProperty.category);
-	secondInd=lookUpIndex(clue.secondProperty.category);
+	firstInd = lookUpIndex(clue.firstProperty.category,cats);
+	secondInd=lookUpIndex(clue.secondProperty.category,cats);
 	var usable =[];
 	
 	for(var i=0;i<solutionSet.length;i++){
@@ -157,8 +169,8 @@ function checkDirect(clue, solutionSet){
 
 
 function checkAnti(clue,solutionSet){
-	firstInd = lookUpIndex(clue.firstProperty.category);
-	secondInd=lookUpIndex(clue.secondProperty.category);
+	firstInd = lookUpIndex(clue.firstProperty.category,cats);
+	secondInd=lookUpIndex(clue.secondProperty.category,cats);
 	
 	var usable = [];
 	for(var i=0;i<solutionSet.length;i++){
@@ -172,36 +184,4 @@ function checkAnti(clue,solutionSet){
 		}
 	}
 	return usable;
-}
-
-
-
-
-function lookUpIndex(catName){
-	for(var i=0;i<cats.length;i++){
-		if(cats[i].name==catName){
-			return i;
-			i=cats.length;
-		}
-	}
-}
-
-
-function getRandInt(min, max){
-	min =Math.ceil(min);
-	max=Math.floor(max);
-	return Math.floor(Math.random()*(max-min))+min
-}
-
-
-function permute(arr){
-	var perm = [];
-
-	while(arr.length>0){
-		var ind=getRandInt(0,arr.length);
-		perm.push(arr[ind]);
-		arr.splice(ind, 1);
-	}
-	
-	return perm;
 }

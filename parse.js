@@ -5,12 +5,14 @@ function addClue(clue){
 	var verb = '';
 	var order = getRandInt(0,2);
 	if(order==0){
-		var hold=clue.firstProperty;
-		clue.firstProperty=clue.secondProperty;
-		clue.secondProperty=hold;
+		if(cats[lookUpIndex(clue.firstProperty.category,cats)].usage!='name'){
+			var hold=clue.firstProperty;
+			clue.firstProperty=clue.secondProperty;
+			clue.secondProperty=hold;
+		}
 	}
-	firstInd = lookUpIndex(clue.firstProperty.category);
-	secondInd=lookUpIndex(clue.secondProperty.category);
+	firstInd = lookUpIndex(clue.firstProperty.category,cats);
+	secondInd=lookUpIndex(clue.secondProperty.category,cats);
 	
 	if(cats[firstInd].usage=='possession'){
 		if(cats[firstInd].article){
