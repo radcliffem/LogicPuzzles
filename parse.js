@@ -1,5 +1,30 @@
 function addClue(clue){
 	Add = document.createElement("P");
+	var sentence="";
+	
+	if(clue.type=='direct'||clue.type=='anti'){
+		sentence=makeSentence(clue);
+	}else if(clue.type=='xor'){
+		var sentence1 = makeSentence(clue.directPart);
+		if(cats[lookUpIndex(clue.directPart.firstProperty.category,cats)].usage!='name'){
+			sentence1=sentence1.toLowerCase();
+		}
+		hold=clue.antiPart;
+		hold.type='direct';
+		var sentence2=makeSentence(hold);
+		if(cats[lookUpIndex(clue.antiPart.firstProperty.category,cats)].usage!='name'){
+			sentence2=sentence2.toLowerCase();
+		}
+		sentence = 'Either '+sentence1+' or '+sentence2+', but not both'
+	}
+	
+	Add.innerText = sentence+'.';
+	document.getElementById("clueBox").appendChild(Add);
+}
+
+
+
+function makeSentence(clue){
 	var firstNoun='';
 	var secondNoun='';
 	var verb = '';
@@ -34,9 +59,9 @@ function addClue(clue){
 		firstNoun = 'The person who likes '+clue.firstProperty.value+cats[firstInd].addon;
 	}
 	if(cats[secondInd].article){
-		secondNoun = 'a '+clue.secondProperty.value+cats[secondInd].addon+'.';
+		secondNoun = 'a '+clue.secondProperty.value+cats[secondInd].addon;
 	}else{
-		secondNoun = clue.secondProperty.value+cats[secondInd].addon+'.';
+		secondNoun = clue.secondProperty.value+cats[secondInd].addon;
 	}
 	
 	if(clue.type=='direct'){
@@ -57,6 +82,6 @@ function addClue(clue){
 		}
 	}
 	
-	Add.innerText = firstNoun + verb + secondNoun;
-	document.getElementById("clueBox").appendChild(Add);
+	
+	return firstNoun+verb+secondNoun;
 }

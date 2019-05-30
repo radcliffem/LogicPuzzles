@@ -26,6 +26,9 @@ function turnOff(elements){
 
 function generateClues(solution){
 	var clues=[];
+	var direct=[];
+	var anti=[];
+	
 	var width=cats.length;
 	var height=solution.length;
 	for(var j=0; j<height;j++){
@@ -35,7 +38,8 @@ function generateClues(solution){
 				newClue.type='direct';
 				newClue.firstProperty={category:cats[i].name,value:solution[j][i]};
 				newClue.secondProperty={category:cats[k].name,value:solution[j][k]};
-				clues.push(newClue);	
+				clues.push(newClue);
+				direct.push(newClue);	
 			}
 		}
 		
@@ -47,10 +51,23 @@ function generateClues(solution){
 					newClue.firstProperty={category:cats[k].name,value:solution[j][k]};
 					newClue.secondProperty={category:cats[l].name,value:solution[i][l]};
 					clues.push(newClue);
+					anti.push(newClue);
 				}
 			}
 		}
 	}
+	
+	anti=permute(anti);
+	direct=permute(direct);
+	for(var i=0;i<direct.length;i++){
+		var newClue={};
+		newClue.type='xor';
+		newClue.directPart=direct[i];
+		newClue.antiPart=anti[i];
+		clues.push(newClue);
+	}
+	
+	
 	return clues;
 }
 
@@ -89,15 +106,22 @@ function makePuzzle(cats){
 	var numClues = 0;
 	var newPossible = [];
 	var newClue = []
+	var xorcount=1
 	
 	while(solved==false){
 		newPossible = [];
 		newClue = allClues[numClues];
 		
-		newPossible = processClue(newClue, possibleSolutions);
+		if(xorcount<3||newClue.type!='xor'){
+			newPossible = processClue(newClue, possibleSolutions);
+		}else{
+			newPossible=possibleSolutions;
+		}
+		
 		
 		if(newPossible.length<possibleSolutions.length){
 			keepClues.push(newClue);
+			if(newClue.type=='xor'){xorcount+=1;}
 			possibleSolutions = newPossible;
 		}
 		if(possibleSolutions.length==1){
@@ -145,8 +169,21 @@ function processClue(clue,solutionSet){
 		return checkAnti(clue,solutionSet);
 	}else if(clue.type=='direct'){
 		return checkDirect(clue,solutionSet);
+	}else if(clue.type=='xor'){
+		return checkXor(clue,solutionSet)
 	}
 }
+
+function checkXor(clue, solutionSet){
+	var usableFirst = checkDirect(clue.directPart, solutionSet);
+	usableFirst = checkAnti(clue.antiPart, usableFirst);
+	
+	var usableSecond=checkDirect(clue.antiPart,solutionSet);
+	usableSecond=checkAnti(clue.directPart,usableSecond);
+	
+	return usableFirst.concat(usableSecond);
+}
+
 
 
 function checkDirect(clue, solutionSet){
