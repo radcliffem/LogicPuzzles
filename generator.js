@@ -8,9 +8,13 @@ var reducible = true;
 document.getElementById("submit").onclick=function(){
 	width=document.getElementById("width").value;
 	height=document.getElementById("height").value;
-	pickCategories(width,height);
-	makePuzzle(cats);
-	turnOff(document.getElementsByName("setup"));
+	if(width>4||height>4){
+		alert("Sorry, you cannot have more than 4 categories or more than 4 people.");
+	}else{
+		pickCategories(width,height);
+		makePuzzle(cats);
+		turnOff(document.getElementsByName("setup"));
+	}	
 }
 
 
@@ -64,7 +68,6 @@ function generateClues(solution){
 						newClue.firstProperty={category:cats[k].name,value:solution[i][k]};
 						newClue.secondProperty={category:cats[k].name,value:solution[j][k]};
 					}
-					console.log(newClue);
 					clues.push(newClue);
 				}
 			}

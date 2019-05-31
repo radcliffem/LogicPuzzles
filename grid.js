@@ -121,6 +121,7 @@ document.getElementById("check").onclick=function(){
 	for(var i=0;i<solution.length;i++){
 		for(var j=1;j<solution[0].length;j++){
 			if(document.getElementById(solution[i][0]+solution[i][j]).innerText!=interior[2].name){
+				console.log(solution[i][0]+solution[i][j])
 				correct=false;
 			}
 		}
