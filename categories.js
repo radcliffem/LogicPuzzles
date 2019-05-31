@@ -1,58 +1,73 @@
-var names = {'name':'name',
-		'usage':'name',
-		'values': [[['Mary'],['John'],['Susan'],['Jessica'],['Brandon']]],
-		'addon': ''
+var names= {'type': 'category',
+	'name':'name',
+	'usage':'name',
+	'values': [[['Mary'],['John'],['Susan'],['Jessica'],['Brandon']]],
+	'addon': ''
 	};
 
+var day = {'type': 'ordinal',
+		'name':'day',
+		'usage': 'ordinal',
+		'article': false,
+		'values': [[['Monday'],['Tuesday'],['Wednesday'],['Thursday'],['Friday']]],
+		'standard': [[['Monday'],['Tuesday'],['Wednesday'],['Thursday'],['Friday']]],
+		'table':[{'name':'Monday'},{'name':'Tuesday'},{'name':'Wednesday'},{'name':'Thursday'},{'name':'Friday'}],
+		'addon': ' to Kennywood '};
 
-var houses = {'name': 'house',
+var options = {
+	
+	'houses': {'type': 'category',
+		'name': 'house',
 		'usage': 'possession',
 		'article': true,
 		'values': [[['red'],['blue'],['green'],['yellow'],['white']]],
 		'addon': ' house'
-	};
-
-
-var nationality = {'name': 'nationality',
+		},
+		
+	'nationality': {'type': 'category',
+		'name': 'nationality',
 		'usage': 'adjective',
 		'values': [[['English'], ['Polish'], ['German'],['French'],['Chinese']]],
 		'addon': ''
-	};
-
-var pets = {'name': 'pets',
+		},
+	
+	'pets' :{'type':'category',
+		'name': 'pets',
 		'usage': 'possession',
 		'article': true,
 		'values': [[['dog'],['cat'],['fish'],['bunny']]],
 		'addon': ''
-	};
+		},
 	
-var eyes = {'name': 'eyes',
+	'eyes' :{'type': 'category',
+		'name': 'eyes',
 		'usage': 'possession',
 		'article': false,
 		'values': [[['green'],['blue'],['brown'],['hazel'],['violet']]],
 		'addon': ' eyes'
-	};
-	
-var job = {'name': 'job',
+		},
+		
+	'job': {'type':'category',
+		'name': 'job',
 		'usage': 'classify',
 		'article': true,
 		'values': [[['architect'],['baker'],['lawyer'],['programmer'],['teacher'],['housecleaner']]],
 		'addon': ''
-	};
-
-var hobby = {'name': 'hobby',
+		},
+	
+	'hobby': {'type':'category',
+		'name': 'hobby',
 		'usage': 'enjoyment',
 		'article': false,
-		'values':[[['reading'],['cooking'],['gardening'],['playing video games'],['drawing'],['sewing']]],
+		'values':[[['reading'],['cooking'],['gardening'],['video games'],['drawing'],['sewing']]],
 		'addon':''
-	};
-
-var icecream = {'name': 'ice cream',
+		},
+	
+	'icecream' : {'type':'category',
+		'name': 'ice cream',
 		'usage': 'enjoyment',
 		'article': false,
 		'values':[[['chocolate'], ['strawberry'], ['vanilla'], ['pistachio'], ['Rocky Road'], ['neopolitan']]],
 		'addon': ' ice cream'
-	};
-
-
-var options = [ houses, nationality, pets, eyes, job, hobby, icecream];
+		}
+}

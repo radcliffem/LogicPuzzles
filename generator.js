@@ -21,6 +21,13 @@ function turnOff(elements){
 }
 
 
+function turnOn(elements){
+	for(var i=0;i<elements.length;i++){
+		elements[i].style.display="block";
+	}
+}
+
+
 //width indicates the number of categories in play 
 //(i.e., width = solution[0].length)
 
@@ -44,14 +51,26 @@ function generateClues(solution){
 		}
 		
 		for(var i=j+1;i<height;i++){
+			var newClue={};
+			newClue.type='before';
+			var personAday=solution[j][1];
+			var personBday=solution[i][1];
+			if(lookUpIndex(personAday,day.table)<lookUpIndex(personBday, day.table)){
+				newClue.firstPerson=solution[j][0];
+				newClue.secondPerson=solution[i][0];
+			}else{
+				newClue.firstPerson=solution[i][0];
+				newClue.secondPerson=solution[j][0];
+			}
+			clues.push(newClue);
 			for(var k=0;k<width;k++){
 				for(var l=k+1;l<width;l++){
-					var newClue={};
-					newClue.type='anti';
-					newClue.firstProperty={category:cats[k].name,value:solution[j][k]};
-					newClue.secondProperty={category:cats[l].name,value:solution[i][l]};
-					clues.push(newClue);
-					anti.push(newClue);
+					var aClue={};
+					aClue.type='anti';
+					aClue.firstProperty={category:cats[k].name,value:solution[j][k]};
+					aClue.secondProperty={category:cats[l].name,value:solution[i][l]};
+					clues.push(aClue);
+					anti.push(aClue);
 				}
 			}
 		}
@@ -78,12 +97,20 @@ function pickCategories(width,height){
 	while(names.values[0].length>height){
 		names.values[0].pop();
 	}
-	options = permute(options);
+	
+	cats.push(day);
+	while(day.values[0].length>height){
+		day.values[0].pop();
+		day.standard[0].pop();
+	}
+	
+	var keys=Object.keys(options);
+	keys = permute(keys);
 	for(var i=0;i<width-1;i++){
-		cats.push(options[i]);
-		options[i].values[0]=permute(options[i].values[0]);
-		while(options[i].values[0].length>height){
-			options[i].values[0].pop();
+		cats.push(options[keys[i]]);
+		options[keys[i]].values[0]=permute(options[keys[i]].values[0]);
+		while(options[keys[i]].values[0].length>height){
+			options[keys[i]].values[0].pop();
 		}
 	}
 }
@@ -100,7 +127,7 @@ function makePuzzle(cats){
 		
  	allClues = generateClues(solution);
 	allClues=permute(allClues);
-	var possibleSolutions=allSolutions;
+	var possibleSolutions=Array.from(allSolutions);
 		
 	var keepClues = [];
 	var numClues = 0;
@@ -170,9 +197,31 @@ function processClue(clue,solutionSet){
 	}else if(clue.type=='direct'){
 		return checkDirect(clue,solutionSet);
 	}else if(clue.type=='xor'){
-		return checkXor(clue,solutionSet)
+		return checkXor(clue,solutionSet);
+	}else if(clue.type=='before'){
+		return checkBefore(clue,solutionSet);
 	}
 }
+
+function checkBefore(clue,solutionSet){
+	var first=0;
+	var second=0;
+	var usable=[];
+	for(var i=0;i<solutionSet.length;i++){
+		for(var j=0;j<solutionSet[i].length;j++){
+			if(solutionSet[i][j][0]==clue.firstPerson){
+				first = j;
+			}else if(solutionSet[i][j][0]==clue.secondPerson){
+				second=j;
+			}
+		}
+		if(lookUpIndex(solutionSet[i][first][1],day.table)<lookUpIndex(solutionSet[i][second][1],day.table)){
+			usable.push(solutionSet[i]);
+		}
+	}
+	return usable;
+}
+
 
 function checkXor(clue, solutionSet){
 	var usableFirst = checkDirect(clue.directPart, solutionSet);

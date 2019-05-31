@@ -1,13 +1,14 @@
 var interior=[{'name':""},{'name':'\u00D7'},{'name':'\u25CF'}];
 
 function makeGrid(solution){
-	
+	turnOn(document.getElementsByName("play"));
 	var width = solution[0].length;
 	var height = solution.length;
 	
 	
 	var permuted=[]
-	for(var i=1;i<width;i++){
+	permuted[0] = day.standard[0];
+	for(var i=2;i<width;i++){
 		var toPermute = [];
 		for(var j=0;j<height;j++){
 			toPermute.push(solution[j][i]);
@@ -33,8 +34,6 @@ function makeGrid(solution){
 	for(var i=0;i<width-1;i++){
 		for(var j=0;j<height;j++){
 			titleElement = document.createElement("TD");
-	//		titleElement.style.transformOrigin = "left bottom";
-	//		titleElement.style.paddingTop = "100px"
 			titleElement.style.transform="rotate(-90deg)";
 			titleElement.innerText = permuted[i][j];
 			titleElement.style.whiteSpace ="nowrap";
@@ -68,7 +67,8 @@ function makeGrid(solution){
 			for(var j=0;j<height;j++){
 				newBox = document.createElement("TD");
 				newBox.style.textAlign = "center";
-				newBox.id = solution[i][0]+permuted[k][j]
+				newBox.id = solution[i][0]+permuted[k][j];
+				newBox.setAttribute('name',"XObox");
 				newBox.style.border = "1px solid black";
 				newBox.innerText="";
 				newBox.onclick= function() {
@@ -97,6 +97,7 @@ function makeGrid(solution){
 			for(var k=0;k<i;k++){
 				for(var l=0;l<height;l++){
 					newBox=document.createElement("TD");
+					newBox.setAttribute('name',"XObox");
 					newBox.id = permuted[i][j]+permuted[k][l];
 					newBox.style.border = "1px solid black"
 					newBox.style.textAlign = "center";
@@ -115,7 +116,21 @@ function makeGrid(solution){
 }
 
 
-
+document.getElementById("check").onclick=function(){
+	correct=true;
+	for(var i=0;i<solution.length;i++){
+		for(var j=1;j<solution[0].length;j++){
+			if(document.getElementById(solution[i][0]+solution[i][j]).innerText!=interior[2].name){
+				correct=false;
+			}
+		}
+	}
+	if(correct){
+		alert("Congratulations! You solved the puzzle.")
+	}else{
+		alert("Sorry, not quite. Try again.")
+	}
+}
 
 
 

@@ -1,5 +1,5 @@
 
-<div id="clueBox" style="float:left"></div>
+<div id="clueBox" style="float:left" width="300px"></div>
 <script src="solver.js"></script>
 
 <script src="categories.js"></script>
@@ -13,12 +13,16 @@
 <div name="setup">Number of people: <input type="text" name="setup" value="" id="height"></div>
 <button name="setup" id="submit" type="button">Submit</button>
 <br>
-<br>
-<br>
-<br>
 
-<table id="maingrid" style="float:right; border:1px solid black; border-collapse:collapse; table-layout:fixed; border-top: 0px; border-left: 0px">
+<div name="play" id="solutionBox" style="float:right">
+<br>
+<br>
+<table id="maingrid" style="border:1px solid black; border-collapse:collapse; table-layout:fixed; border-top: 0px; border-left: 0px">
 </table>
+<br>
+<br>
+<button name="play" style="display:none" id="check" type="button">Check Solution</button>
+</div>
 
 <script src="grid.js"></script>
 
