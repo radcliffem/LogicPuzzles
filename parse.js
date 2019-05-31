@@ -20,7 +20,7 @@ function addClue(clue){
 		}
 		sentence = 'Either '+sentence1+' or '+sentence2+', but not both'
 	}else if(clue.type=='before'){
-		sentence = clue.firstPerson+' went to Kennywood before '+clue.secondPerson;
+		sentence = makeSentence(clue);
 	}
 	
 	Add.innerText = count.toString()+'. '+sentence+'.';
@@ -44,40 +44,18 @@ function makeSentence(clue){
 		order=1;
 	}
 	if(order==0){
+		if(clue.type!='before'){
 			var hold=clue.firstProperty;
 			clue.firstProperty=clue.secondProperty;
 			clue.secondProperty=hold;
-	}
-	firstInd = lookUpIndex(clue.firstProperty.category,cats);
-	secondInd=lookUpIndex(clue.secondProperty.category,cats);
-	
-	if(cats[firstInd].usage=='possession'){
-		if(cats[firstInd].article){
-			firstNoun = 'The person with a '+clue.firstProperty.value+cats[firstInd].addon;
-		}else{
-			firstNoun = 'The person with '+clue.firstProperty.value+cats[firstInd].addon;
 		}
-	}else if(cats[firstInd].usage =='name'){
-		firstNoun = clue.firstProperty.value+cats[firstInd].addon;
-	}else if(cats[firstInd].usage == 'adjective'){
-		firstNoun = 'The '+clue.firstProperty.value+cats[firstInd].addon+' person';
-	}else if(cats[firstInd].usage=='classify'){
-		if(cats[firstInd].article){
-			firstNoun = 'The '+clue.firstProperty.value+cats[firstInd].addon;
-		}else{
-			firstNoun = clue.firstProperty.value+cats[firstInd].addon;
-		}
-	}else if(cats[firstInd].usage == 'enjoyment'){
-		firstNoun = 'The person who likes '+clue.firstProperty.value+cats[firstInd].addon;
 	}
 	
-	if(cats[secondInd].usage=='ordinal'){
-		secondNoun = clue.secondProperty.value;
-	}else	if(cats[secondInd].article){
-		secondNoun = 'a '+clue.secondProperty.value+cats[secondInd].addon;
-	}else{
-		secondNoun = clue.secondProperty.value+cats[secondInd].addon;
-	}
+	firstNoun=makeFirstNoun(clue.firstProperty);
+	secondNoun=makeSecondNoun(clue.secondProperty);
+	
+	firstInd= lookUpIndex(clue.firstProperty.category,cats);
+	secondInd= lookUpIndex(clue.secondProperty.category,cats);
 	
 	if(clue.type=='direct'){
 		if(cats[secondInd].usage=='ordinal'){
@@ -99,8 +77,58 @@ function makeSentence(clue){
 		}else{
 			verb = ' is not ';
 		}
+	}else if(clue.type=='before'){
+		secondNoun=makeFirstNoun(clue.secondProperty);
+		if(cats[lookUpIndex(clue.category,cats)].usage!='name'){
+			secondNoun=secondNoun.charAt(0).toLowerCase()+secondNoun.slice(1);
+		}
+		
+		verb=' went to Kennywood before '
 	}
 	
 	
 	return firstNoun+verb+secondNoun;
+}
+
+
+function makeFirstNoun(property){
+	var noun='';
+	ind = lookUpIndex(property.category,cats);
+	
+	if(cats[ind].usage=='possession'){
+		if(cats[ind].article){
+			noun = 'The person with a '+property.value+cats[ind].addon;
+		}else{
+			noun = 'The person with '+property.value+cats[ind].addon;
+		}
+	}else if(cats[ind].usage =='name'){
+		noun = property.value+cats[ind].addon;
+	}else if(cats[ind].usage == 'adjective'){
+		noun = 'The '+property.value+cats[ind].addon+' person';
+	}else if(cats[ind].usage=='classify'){
+		if(cats[ind].article){
+			noun = 'The '+property.value+cats[ind].addon;
+		}else{
+			noun = property.value+cats[ind].addon;
+		}
+	}else if(cats[ind].usage == 'enjoyment'){
+		noun = 'The person who likes '+property.value+cats[ind].addon;
+	}
+	return noun;
+}
+
+
+function makeSecondNoun(property){
+	var noun='';
+	ind=lookUpIndex(property.category,cats);
+	
+	if(cats[ind].usage=='ordinal'){
+		noun = property.value;
+	}else	if(cats[ind].article){
+		noun = 'a '+property.value+cats[ind].addon;
+	}else{
+		noun = property.value+cats[ind].addon;
+	}
+	
+	return noun;
 }

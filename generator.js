@@ -51,18 +51,24 @@ function generateClues(solution){
 		}
 		
 		for(var i=j+1;i<height;i++){
-			var newClue={};
-			newClue.type='before';
-			var personAday=solution[j][1];
-			var personBday=solution[i][1];
-			if(lookUpIndex(personAday,day.table)<lookUpIndex(personBday, day.table)){
-				newClue.firstPerson=solution[j][0];
-				newClue.secondPerson=solution[i][0];
-			}else{
-				newClue.firstPerson=solution[i][0];
-				newClue.secondPerson=solution[j][0];
+			for(k=0;k<solution[0].length;k++){
+				if(k!=1){
+					var newClue={};
+					newClue.type='before';
+					
+					newClue.category=cats[k].name;
+					if(lookUpIndex(solution[j][1],day.table)<lookUpIndex(solution[i][1], day.table)){
+						newClue.firstProperty={category:cats[k].name,value:solution[j][k]};
+						newClue.secondProperty={category:cats[k].name,value:solution[i][k]};
+					}else{
+						newClue.firstProperty={category:cats[k].name,value:solution[i][k]};
+						newClue.secondProperty={category:cats[k].name,value:solution[j][k]};
+					}
+					console.log(newClue);
+					clues.push(newClue);
+				}
 			}
-			clues.push(newClue);
+			
 			for(var k=0;k<width;k++){
 				for(var l=k+1;l<width;l++){
 					var aClue={};
@@ -206,12 +212,13 @@ function processClue(clue,solutionSet){
 function checkBefore(clue,solutionSet){
 	var first=0;
 	var second=0;
+	var ind=lookUpIndex(clue.category,cats);
 	var usable=[];
 	for(var i=0;i<solutionSet.length;i++){
 		for(var j=0;j<solutionSet[i].length;j++){
-			if(solutionSet[i][j][0]==clue.firstPerson){
+			if(solutionSet[i][j][ind]==clue.firstProperty.value){
 				first = j;
-			}else if(solutionSet[i][j][0]==clue.secondPerson){
+			}else if(solutionSet[i][j][ind]==clue.secondProperty.value){
 				second=j;
 			}
 		}
