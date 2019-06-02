@@ -1,4 +1,7 @@
 var interior=[{'name':""},{'name':'\u00D7'},{'name':'\u25CF'}];
+var recordClicks=[];
+var saveState=[];
+var saveNum=0;
 
 function makeGrid(solution){
 	turnOn(document.getElementsByName("play"));
@@ -73,6 +76,7 @@ function makeGrid(solution){
 				newBox.innerText="";
 				newBox.onclick= function() {
 					this.innerText=interior[(lookUpIndex(this.innerText,interior)+1)%3].name;
+					recordClicks.push(this.id);
 				}
 				newNameRow.appendChild(newBox);
 				if(j==height-1){newBox.style.borderRight="2px solid black";}
@@ -104,6 +108,7 @@ function makeGrid(solution){
 					newBox.innerText="";
 					newBox.onclick= function() {
 						this.innerText=interior[(lookUpIndex(this.innerText,interior)+1)%3].name;
+						recordClicks.push(this.id);
 					}
 					if(j==height-1){newBox.style.borderBottom="2px solid black";}
 					if(l==height-1){newBox.style.borderRight="2px solid black";}
@@ -115,6 +120,28 @@ function makeGrid(solution){
 	}
 }
 
+document.getElementById("undo").onclick=function(){
+	var change = document.getElementById(recordClicks[recordClicks.length-1]);
+	change.innerText=interior[(lookUpIndex(change.innerText,interior)-1)%3].name;
+	recordClicks.pop();
+}
+
+document.getElementById("saveState").onclick=function(){
+	boxes=document.getElementsByName('XObox');
+	for(var i=0;i<boxes.length;i++){
+		saveState.push([boxes[i].id, boxes[i].innerText]);
+	}
+	saveNum=recordClicks.length;
+}
+
+document.getElementById("revert").onclick=function(){
+	for(var i=0;i<saveState.length;i++){
+		document.getElementById(saveState[i][0]).innerText=saveState[i][1];
+	}
+	recordClicks = recordClicks.slice(0,saveNum);
+}
+
+
 
 document.getElementById("check").onclick=function(){
 	correct=true;
@@ -124,7 +151,14 @@ document.getElementById("check").onclick=function(){
 				console.log(solution[i][0]+solution[i][j])
 				correct=false;
 			}
+			for(var k=i+1;k<solution.length;k++){
+				if(document.getElementById(solution[i][0]+solution[k][j]).innerText==interior[2].name){
+					console.log(solution[i][0]+solution[k][j])
+					correct=false;
+				}
+			}
 		}
+
 	}
 	if(correct){
 		alert("Congratulations! You solved the puzzle.")
