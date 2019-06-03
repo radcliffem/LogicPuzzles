@@ -1,7 +1,7 @@
 var interior=[{'name':""},{'name':'\u00D7'},{'name':'\u25CF'}];
 var recordClicks=[];
 var saveState=[];
-var saveNum=0;
+var saveClicks=[];
 
 function makeGrid(solution){
 	turnOn(document.getElementsByName("play"));
@@ -131,14 +131,14 @@ document.getElementById("saveState").onclick=function(){
 	for(var i=0;i<boxes.length;i++){
 		saveState.push([boxes[i].id, boxes[i].innerText]);
 	}
-	saveNum=recordClicks.length;
+	saveClicks=recordClicks;
 }
 
 document.getElementById("revert").onclick=function(){
 	for(var i=0;i<saveState.length;i++){
 		document.getElementById(saveState[i][0]).innerText=saveState[i][1];
 	}
-	recordClicks = recordClicks.slice(0,saveNum);
+	recordClicks = saveClicks;
 }
 
 

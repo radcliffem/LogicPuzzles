@@ -24,11 +24,22 @@ function addClue(clue){
 	}
 	
 	Add.innerText = count.toString()+'. '+sentence+'.';
+	var newSpace=document.createElement("BR");
+	newSpace.setAttribute('id',count.toString()+'space');
+	Add.setAttribute('id',count.toString());
 	count++;
+	Add.onclick=function(){
+		document.getElementById("clueBox").removeChild(this);
+		var space=document.getElementById(this.id+'space')
+		document.getElementById("clueBox").removeChild(space);
+		document.getElementById("clueBox").appendChild(this);
+		document.getElementById("clueBox").appendChild(space);
+		this.style.textDecoration ="line-through";
+	}
 	document.getElementById("clueBox").appendChild(Add);
-	document.getElementById("clueBox").appendChild(document.createElement("BR"));
-	
+	document.getElementById("clueBox").appendChild(newSpace);
 }
+
 
 
 

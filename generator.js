@@ -1,9 +1,7 @@
 var allSolutions=[];
 var solution = [];
 var solved = false;
-var allClues=[];
 var cats=[];
-var reducible = true;
 
 document.getElementById("submit").onclick=function(){
 	width=document.getElementById("width").value;
@@ -35,70 +33,78 @@ function turnOn(elements){
 //width indicates the number of categories in play 
 //(i.e., width = solution[0].length)
 
-function generateClues(solution){
-	var clues=[];
-	var direct=[];
-	var anti=[];
+function generateClue(){
 	
 	var width=cats.length;
 	var height=solution.length;
-	for(var j=0; j<height;j++){
-		for(var i=0;i<width;i++){
-			for(var k=i+1;k<width;k++){
-				var newClue={};
-				newClue.type='direct';
-				newClue.firstProperty={category:cats[i].name,value:solution[j][i]};
-				newClue.secondProperty={category:cats[k].name,value:solution[j][k]};
-				clues.push(newClue);
-				direct.push(newClue);	
-			}
-		}
-		
-		for(var i=j+1;i<height;i++){
-			for(k=0;k<solution[0].length;k++){
-				if(k!=1){
-					var newClue={};
-					newClue.type='before';
-					
-					newClue.category=cats[k].name;
-					if(lookUpIndex(solution[j][1],day.table)<lookUpIndex(solution[i][1], day.table)){
-						newClue.firstProperty={category:cats[k].name,value:solution[j][k]};
-						newClue.secondProperty={category:cats[k].name,value:solution[i][k]};
-					}else{
-						newClue.firstProperty={category:cats[k].name,value:solution[i][k]};
-						newClue.secondProperty={category:cats[k].name,value:solution[j][k]};
-					}
-					clues.push(newClue);
-				}
-			}
-			
-			for(var k=0;k<width;k++){
-				for(var l=k+1;l<width;l++){
-					var aClue={};
-					aClue.type='anti';
-					aClue.firstProperty={category:cats[k].name,value:solution[j][k]};
-					aClue.secondProperty={category:cats[l].name,value:solution[i][l]};
-					clues.push(aClue);
-					anti.push(aClue);
-				}
-			}
-		}
+	
+	var pickType=getRandInt(0,4);
+	if(pickType==0){
+		return generateDirectClue(width,height)
+	}else if(pickType==1){
+		return generateAntiClue(width,height);
+	}else if(pickType==2){
+		return generateBeforeClue(width,height);
+	}else if(pickType==3){
+		return generateXorClue(width,height);
 	}
-	
-	anti=permute(anti);
-	direct=permute(direct);
-	for(var i=0;i<direct.length;i++){
-		var newClue={};
-		newClue.type='xor';
-		newClue.directPart=direct[i];
-		newClue.antiPart=anti[i];
-		clues.push(newClue);
-	}
-	
-	
-	return clues;
 }
 
+
+function generateDirectClue(width,height){
+	var j=getRandInt(0,height);
+	var i=getRandInt(0,width-1);
+	var k=getRandInt(i+1,width);
+	
+	var newClue={};
+	newClue.type='direct';
+	newClue.firstProperty={category:cats[i].name,value:solution[j][i]};
+	newClue.secondProperty={category:cats[k].name,value:solution[j][k]};
+	return newClue;
+}
+
+function generateAntiClue(width,height){
+	var j=getRandInt(0,height-1);
+	var i=getRandInt(j+1,height);
+	var k=getRandInt(0,width-1);
+	var l=getRandInt(k+1,width);
+	var newClue={};
+	newClue.type='anti';
+	newClue.firstProperty={category:cats[k].name,value:solution[j][k]};
+	newClue.secondProperty={category:cats[l].name,value:solution[i][l]};
+	return newClue;
+}
+	
+function generateXorClue(width,height){
+	var newClue={};
+	newClue.type='xor';
+	newClue.directPart=generateDirectClue(width,height);
+	newClue.antiPart=generateAntiClue(width,height);
+	return newClue;
+}
+	
+function generateBeforeClue(width,height){
+	var j=getRandInt(0,height-1);
+	var i=getRandInt(j+1,height);
+	var k=1;
+	while(k==1){
+		k=getRandInt(0,width);
+	}
+	
+	var newClue={};
+	newClue.type='before';
+	newClue.category=cats[k].name;
+	if(lookUpIndex(solution[j][1],day.table)<lookUpIndex(solution[i][1], day.table)){
+		newClue.firstProperty={category:cats[k].name,value:solution[j][k]};
+		newClue.secondProperty={category:cats[k].name,value:solution[i][k]};
+	}else{
+		newClue.firstProperty={category:cats[k].name,value:solution[i][k]};
+		newClue.secondProperty={category:cats[k].name,value:solution[j][k]};
+	}
+	return newClue;
+}
+	
+	
 
 function pickCategories(width,height){
 	cats.push(names);
@@ -134,26 +140,21 @@ function makePuzzle(cats){
 	solution=allSolutions[getRandInt(0,allSolutions.length-1)];
 	makeGrid(solution);
 		
- 	allClues = generateClues(solution);
-	allClues=permute(allClues);
 	var possibleSolutions=Array.from(allSolutions);
 		
 	var keepClues = [];
-	var numClues = 0;
 	var newPossible = [];
-	var newClue = []
 	var xorcount=1
 	
 	while(solved==false){
 		newPossible = [];
-		newClue = allClues[numClues];
+		var newClue = generateClue();
 		
 		if(xorcount<3||newClue.type!='xor'){
 			newPossible = processClue(newClue, possibleSolutions);
 		}else{
 			newPossible=possibleSolutions;
 		}
-		
 		
 		if(newPossible.length<possibleSolutions.length){
 			keepClues.push(newClue);
@@ -163,7 +164,6 @@ function makePuzzle(cats){
 		if(possibleSolutions.length==1){
 			solved=true;
 		}
-		numClues++;
 	}
 
 	keepClues = reduceClues(keepClues);
@@ -176,6 +176,7 @@ function makePuzzle(cats){
 		
 
 function reduceClues(clues){
+	var reducible = true;
 	while(reducible){
 		for(var i=0;i<clues.length;i++){
 			var test = Array.from(clues);
