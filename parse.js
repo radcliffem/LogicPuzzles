@@ -24,20 +24,32 @@ function addClue(clue){
 	}
 	
 	Add.innerText = count.toString()+'. '+sentence+'.';
+	Add.setAttribute('class','active');
 	var newSpace=document.createElement("BR");
 	newSpace.setAttribute('id',count.toString()+'space');
 	Add.setAttribute('id',count.toString());
 	count++;
 	Add.onclick=function(){
-		document.getElementById("clueBox").removeChild(this);
-		var space=document.getElementById(this.id+'space')
-		document.getElementById("clueBox").removeChild(space);
-		document.getElementById("clueBox").appendChild(this);
-		document.getElementById("clueBox").appendChild(space);
-		this.style.textDecoration ="line-through";
+		if(this.className=='active'){
+			document.getElementById("activeClues").removeChild(this);
+			var space=document.getElementById(this.id+'space')
+			document.getElementById("activeClues").removeChild(space);
+			document.getElementById("usedClues").appendChild(this);
+			document.getElementById("usedClues").appendChild(space);
+			this.style.textDecoration ="line-through";	
+			this.setAttribute('class','used');
+		}else if(this.className=='used'){
+			document.getElementById("usedClues").removeChild(this);
+			var space=document.getElementById(this.id+'space')
+			document.getElementById("usedClues").removeChild(space);
+			document.getElementById("activeClues").appendChild(this);
+			document.getElementById("activeClues").appendChild(space);
+			this.style.textDecoration ="none";
+			this.setAttribute('class','active');
+		}
 	}
-	document.getElementById("clueBox").appendChild(Add);
-	document.getElementById("clueBox").appendChild(newSpace);
+	document.getElementById("activeClues").appendChild(Add);
+	document.getElementById("activeClues").appendChild(newSpace);
 }
 
 
