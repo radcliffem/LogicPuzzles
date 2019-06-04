@@ -1,7 +1,31 @@
+<style>
+.topTitle{
+	transform:rotate(-90deg);
+	white-space:nowrap;
+	border:1px solid black;
+	border-top:0px;
+	border-bottom:2px solid black;
+}
+.sideTitle{
+	border:1px solid black;
+	border-left:0px;
+	border-right:2px solid black;
+	text-align:right;
+	white-space:nowrap;
+	height:24px;
+}
 
-<div id="activeClues" style="float:left" width="300px"></div>
-<div id="usedClues" style="float:left" width="300px"></div>
-<script src="solver.js"></script>
+.XOBox{
+	text-align:center;
+	border:1px solid black;
+}
+
+</style>
+<div style="overflow-y: scroll; float:left;">
+<div id="activeClues"  width="300px"></div>
+<div id="usedClues"  width="300px"></div>
+</div>
+<script src="util.js"></script>
 
 <script src="categories.js"></script>
 <script src="parse.js"></script>
@@ -13,9 +37,11 @@
 <div name="setup">Number of categories: <input type="text" name="setup" value="" id="width"></div>
 <div name="setup">Number of people: <input type="text" name="setup" value="" id="height"></div>
 <button name="setup" id="submit" type="button">Submit</button>
+
+
 <br>
 
-<div name="play" id="solutionBox" style="float:right">
+<div name="play" id="solutionBox" style="float:right;">
 <br>
 <br>
 <table id="maingrid" style="border:1px solid black; border-collapse:collapse; table-layout:fixed; border-top: 0px; border-left: 0px">
@@ -31,7 +57,9 @@
 <button name="play" style="display:none" id="check" type="button">Check Solution</button>
 </div></div>
 
-<script src="grid.js"></script>
+
+<script src="buildPuzzle.js"></script>
+
+<script src="buildGrid.js"></script>
 
 
-<script src="generator.js"></script>

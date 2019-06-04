@@ -9,13 +9,13 @@ function addClue(clue){
 		sentence=makeSentence(clue);
 	}else if(clue.type=='xor'){
 		var sentence1 = makeSentence(clue.directPart);
-		if(cats[lookUpIndex(clue.directPart.firstProperty.category,cats)].usage!='name'){
+		if(usedCategories[lookUpIndex(clue.directPart.firstProperty.category,usedCategories)].usage!='name'){
 			sentence1=sentence1.charAt(0).toLowerCase()+sentence1.slice(1);
 		}
 		hold=clue.antiPart;
 		hold.type='direct';
 		var sentence2=makeSentence(hold);
-		if(cats[lookUpIndex(clue.antiPart.firstProperty.category,cats)].usage!='name'){
+		if(usedCategories[lookUpIndex(clue.antiPart.firstProperty.category,usedCategories)].usage!='name'){
 			sentence2=sentence2.charAt(0).toLowerCase()+sentence2.slice(1);
 		}
 		sentence = 'Either '+sentence1+' or '+sentence2+', but not both'
@@ -60,10 +60,10 @@ function makeSentence(clue){
 	var secondNoun='';
 	var verb = '';
 	var order = getRandInt(0,2);
-	if(cats[lookUpIndex(clue.firstProperty.category,cats)].usage=='ordinal'){
+	if(usedCategories[lookUpIndex(clue.firstProperty.category,usedCategories)].usage=='ordinal'){
 		order=0;
 	}
-	if(cats[lookUpIndex(clue.firstProperty.category,cats)].usage=='name'){
+	if(usedCategories[lookUpIndex(clue.firstProperty.category,usedCategories)].usage=='name'){
 		order=1;
 	}
 	if(order==0){
@@ -77,32 +77,32 @@ function makeSentence(clue){
 	firstNoun=makeFirstNoun(clue.firstProperty);
 	secondNoun=makeSecondNoun(clue.secondProperty);
 	
-	firstInd= lookUpIndex(clue.firstProperty.category,cats);
-	secondInd= lookUpIndex(clue.secondProperty.category,cats);
+	firstInd= lookUpIndex(clue.firstProperty.category,usedCategories);
+	secondInd= lookUpIndex(clue.secondProperty.category,usedCategories);
 	
 	if(clue.type=='direct'){
-		if(cats[secondInd].usage=='ordinal'){
-			verb=' went'+cats[secondInd].addon+' on ';
-		}else if(cats[secondInd].usage=='possession'){
+		if(usedCategories[secondInd].usage=='ordinal'){
+			verb=' went'+usedCategories[secondInd].addon+' on ';
+		}else if(usedCategories[secondInd].usage=='possession'){
 			verb = ' has ';
-		}else if(cats[secondInd].usage=='enjoyment'){
+		}else if(usedCategories[secondInd].usage=='enjoyment'){
 			verb = ' likes ';
 		}else{
 			verb = ' is ';
 		}
 	}else if(clue.type=='anti'){
-		if(cats[secondInd].usage=='ordinal'){
-			verb = ' did not go '+cats[secondInd].addon+'on '
-		}else if(cats[secondInd].usage=='possession'){
+		if(usedCategories[secondInd].usage=='ordinal'){
+			verb = ' did not go '+usedCategories[secondInd].addon+'on '
+		}else if(usedCategories[secondInd].usage=='possession'){
 			verb = ' does not have ';
-		}else if(cats[secondInd].usage=='enjoyment'){
+		}else if(usedCategories[secondInd].usage=='enjoyment'){
 			verb = ' does not like ';
 		}else{
 			verb = ' is not ';
 		}
 	}else if(clue.type=='before'){
 		secondNoun=makeFirstNoun(clue.secondProperty);
-		if(cats[lookUpIndex(clue.category,cats)].usage!='name'){
+		if(usedCategories[lookUpIndex(clue.firstProperty.category,usedCategories)].usage!='name'){
 			secondNoun=secondNoun.charAt(0).toLowerCase()+secondNoun.slice(1);
 		}
 		
@@ -116,26 +116,26 @@ function makeSentence(clue){
 
 function makeFirstNoun(property){
 	var noun='';
-	ind = lookUpIndex(property.category,cats);
+	ind = lookUpIndex(property.category,usedCategories);
 	
-	if(cats[ind].usage=='possession'){
-		if(cats[ind].article){
-			noun = 'The person with a '+property.value+cats[ind].addon;
+	if(usedCategories[ind].usage=='possession'){
+		if(usedCategories[ind].article){
+			noun = 'The person with a '+property.value+usedCategories[ind].addon;
 		}else{
-			noun = 'The person with '+property.value+cats[ind].addon;
+			noun = 'The person with '+property.value+usedCategories[ind].addon;
 		}
-	}else if(cats[ind].usage =='name'){
-		noun = property.value+cats[ind].addon;
-	}else if(cats[ind].usage == 'adjective'){
-		noun = 'The '+property.value+cats[ind].addon+' person';
-	}else if(cats[ind].usage=='classify'){
-		if(cats[ind].article){
-			noun = 'The '+property.value+cats[ind].addon;
+	}else if(usedCategories[ind].usage =='name'){
+		noun = property.value+usedCategories[ind].addon;
+	}else if(usedCategories[ind].usage == 'adjective'){
+		noun = 'The '+property.value+usedCategories[ind].addon+' person';
+	}else if(usedCategories[ind].usage=='classify'){
+		if(usedCategories[ind].article){
+			noun = 'The '+property.value+usedCategories[ind].addon;
 		}else{
-			noun = property.value+cats[ind].addon;
+			noun = property.value+usedCategories[ind].addon;
 		}
-	}else if(cats[ind].usage == 'enjoyment'){
-		noun = 'The person who likes '+property.value+cats[ind].addon;
+	}else if(usedCategories[ind].usage == 'enjoyment'){
+		noun = 'The person who likes '+property.value+usedCategories[ind].addon;
 	}
 	return noun;
 }
@@ -143,14 +143,14 @@ function makeFirstNoun(property){
 
 function makeSecondNoun(property){
 	var noun='';
-	ind=lookUpIndex(property.category,cats);
+	ind=lookUpIndex(property.category,usedCategories);
 	
-	if(cats[ind].usage=='ordinal'){
+	if(usedCategories[ind].usage=='ordinal'){
 		noun = property.value;
-	}else	if(cats[ind].article){
-		noun = 'a '+property.value+cats[ind].addon;
+	}else	if(usedCategories[ind].article){
+		noun = 'a '+property.value+usedCategories[ind].addon;
 	}else{
-		noun = property.value+cats[ind].addon;
+		noun = property.value+usedCategories[ind].addon;
 	}
 	
 	return noun;
