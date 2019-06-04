@@ -127,7 +127,7 @@ function makePuzzle(){
 		newPossible = [];
 		var newClue = generateClue();
 		
-		if(xorcount<3||newClue.type!='xor'){
+		if(xorcount<5||newClue.type!='xor'){
 			newPossible = processClue(newClue, possibleSolutions);
 		}else{
 			newPossible=possibleSolutions;
@@ -156,9 +156,10 @@ function reduceClues(clues){
 	var reducible = true;
 	var possibleSolutions = [];
 	var test=[];
+	var necessary=0;
 	
 	while(reducible){
-		for(var i=0;i<clues.length;i++){
+		for(var i=necessary;i<clues.length;i++){
 			test = Array.from(clues);
 			possibleSolutions=Array.from(allSolutions);
 			test.splice(i,1);
@@ -168,6 +169,9 @@ function reduceClues(clues){
 			if(possibleSolutions.length==1){
 				i=clues.length;
 				clues = Array.from(test);
+			}else{
+				necessary=i+1;
+				console.log(necessary);
 			}
 			if(i==clues.length-1){
 				reducible = false;

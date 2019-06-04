@@ -18,6 +18,12 @@ function addClue(clue){
 		if(usedCategories[lookUpIndex(clue.antiPart.firstProperty.category,usedCategories)].usage!='name'){
 			sentence2=sentence2.charAt(0).toLowerCase()+sentence2.slice(1);
 		}
+		var order = getRandInt(0,2);
+		if(order==0){
+			var hold=sentence1;
+			sentence1=sentence2;
+			sentence2=hold;
+		}
 		sentence = 'Either '+sentence1+' or '+sentence2+', but not both'
 	}else if(clue.type=='before'){
 		sentence = makeSentence(clue);
