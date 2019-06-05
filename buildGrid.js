@@ -126,6 +126,7 @@ document.getElementById("revert").onclick=function(){
 
 
 document.getElementById("check").onclick=function(){
+	var correct=true;
 	for(var i=0;i<height;i++){
 		for(var j=1;j<width;j++){
 			if(document.getElementById(solution[i][0]+solution[i][j]).innerText!=interior[2].name){
