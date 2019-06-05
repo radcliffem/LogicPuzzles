@@ -20,7 +20,7 @@ var options = {
 		'name': 'house',
 		'usage': 'possession',
 		'article': true,
-		'values': [[['red'],['blue'],['green'],['yellow'],['white']]],
+		'values': [[['red'],['beige'],['grey'],['yellow'],['white']]],
 		'addon': ' house'
 		},
 		

@@ -159,7 +159,7 @@ function reduceClues(clues){
 	var necessary=0;
 	
 	while(reducible){
-		for(var i=necessary;i<clues.length;i++){
+		for(var i=necessary;i<clues.length-1;i++){
 			test = Array.from(clues);
 			possibleSolutions=Array.from(allSolutions);
 			test.splice(i,1);
@@ -171,9 +171,9 @@ function reduceClues(clues){
 				clues = Array.from(test);
 			}else{
 				necessary=i+1;
-				console.log(necessary);
+				allSolutions = processClue(clues[i],allSolutions);
 			}
-			if(i==clues.length-1){
+			if(i==clues.length-2){
 				reducible = false;
 			}
 		}

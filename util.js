@@ -53,22 +53,23 @@ function turnOn(elements){
 //list of lists, containing the rows for each item.
 
 function generatePossible(list1, list2){
-	orderings = heapPerms(list2[0].length-1,list2[0],[]);
-	possible = [];
+	var orderings = heapPerms(list2[0].length-1,list2[0],[]);
+	var possible = [];
+	var newSol = [];
+	var pair = [];
+	
 	for(var i=0;i<orderings.length;i++){
 		for(var j=0;j<list1.length;j++){
-			var newSol = [];
-			var pair = [];
+			newSol=[];
 			for(k=0;k<list1[j].length;k++){
 				pair=list1[j][k].concat(orderings[i][k]);
-				newSol.push(pair);
+				newSol.push(Array.from(pair));
 			}
-			possible.push(newSol);
+			possible.push(Array.from(newSol));
 		}
 	}
 	return possible;
 }
-
 
 //Generate all possible permutations of an array, arr, and store them in a set
 //(presented as an array) called set. Returns set, filled with permutations.
