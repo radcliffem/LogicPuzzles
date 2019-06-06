@@ -53,7 +53,7 @@ function turnOn(elements){
 //list of lists, containing the rows for each item.
 
 function generatePossible(list1, list2){
-	var orderings = heapPerms(list2[0].length-1,list2[0],[]);
+	var orderings = heapPerms(list2[0].length,list2[0],[]);
 	var possible = [];
 	var newSol = [];
 	var pair = [];
@@ -74,22 +74,22 @@ function generatePossible(list1, list2){
 //Generate all possible permutations of an array, arr, and store them in a set
 //(presented as an array) called set. Returns set, filled with permutations.
 
-function heapPerms(n, arr, set){
-	if(n>0){
-		heapPerms(n-1, arr, set);
-		for(var i=0; i<=n-1; i++){
-			if(n%2==1){
-				arr=swap(arr, i, n);
-			}else{
-				arr=swap(arr, 0, n);
-			}
-			heapPerms(n-1, arr, set);
-		}
-	}else{
+function heapPerms(n, arr,set){
+	if(n==1){
 		set.push(Array.from(arr));
+	}else{
+		for(var i=1;i<=n;i++){
+			heapPerms(n-1,arr,set);
+			if(n%2){
+				swap(arr,0,n-1);
+			}else{
+				swap(arr,i-1,n-1);
+			}
+		}
 	}
 	return set;
 }
+
 
 
 //Exchange positions i and j in an array
